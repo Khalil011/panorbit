@@ -1,34 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import LandingPage from "./components/LandingPage";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Profile from "./components/Profile";
 import axios from "axios";
-import { Button } from "semantic-ui-react";
 const App = () => {
   const [info, setInfo] = useState({ users: "" });
 
-  const onFormSubmit = async () => {
-    const response = await axios.get("https://panorbit.in/api/users.json");
-    setInfo(response.data);
-    //console.log(info);
-    //console.log(info.users);
-
+  useEffect(() => {
+    const fetchdata = async () => {
+      const response = await axios.get("https://panorbit.in/api/users.json");
+      setInfo(response.data);
+      //console.log(info);
+      console.log(info.users);
+    };
+    fetchdata();
     //info.users.map((i)=>console.log(i.name))
-  };
-  let itemToRender;
-
-  if (info.users) {
-    itemToRender = info.users.map((i) => {
-      return (
-        <div>
-          <li key={i.id}>{i.name}</li>
-        </div>
-      );
-    });
-  }
-
+  }, []);
   return (
-    <div>
-      <Button onClick={onFormSubmit}>click here</Button>
-      {itemToRender}
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          <LandingPage info={info} />
+        </Route>
+        <Route path="/profile" component={Profile}></Route>
+      </Switch>
+    </Router>
   );
 };
 export default App;
